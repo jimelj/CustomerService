@@ -14,7 +14,10 @@ const port = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: isProduction ? '*' : 'http://localhost:3001',
+  credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -516,11 +519,6 @@ app.post('/webhook/name', async (req, res) => {
 
 // API Routes for data access
 app.get('/api/customers', async (req, res) => {
-  // Add CORS headers
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
   try {
     const customers = await Customer.findAll({
       include: [
@@ -536,11 +534,6 @@ app.get('/api/customers', async (req, res) => {
 });
 
 app.get('/api/service-requests', async (req, res) => {
-  // Add CORS headers
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
   try {
     const requests = await ServiceRequest.findAll({
       include: [{ model: Customer, as: 'customer' }]
@@ -553,11 +546,6 @@ app.get('/api/service-requests', async (req, res) => {
 });
 
 app.get('/api/call-logs', async (req, res) => {
-  // Add CORS headers
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
   try {
     const logs = await CallLog.findAll({
       include: [{ 
@@ -575,10 +563,6 @@ app.get('/api/call-logs', async (req, res) => {
 
 // Health check endpoint
 app.get('/health', async (req, res) => {
-  // Add CORS headers
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   try {
     // Check database connection
     await sequelize.authenticate();
